@@ -42,28 +42,49 @@ def normalize_email(input):
 
 
 # pattern from regex
-phone_pattern = r"\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}"
-email_pattern = r"^[a-zA-Z][a-zA-Z0-9]*[\.]{0,1}[a-zA-Z0-9]*[a-zA-Z]\@[a-zA-Z][a-zA-Z0-9\.]*\.[a-zA-Z]{3,12}$"
+phone_pattern = re.compile("\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}")
+email_pattern = re.compile(
+    "[a-zA-Z][a-zA-Z0-9]*[\.]{0,1}[a-zA-Z0-9]*[a-zA-Z]\@[a-zA-Z][a-zA-Z0-9\.]*\.[a-zA-Z]{3,12}"
+)
 
 with open("assets/existing-contacts.txt") as existing_contacts:
     lines = existing_contacts.readlines()
 # print(lines)
-numbers = set()
-emails = set()
+numbers = set()  # returns a new set object
+emails = set()  # returns a new set object
 
 for line in lines:
-    match = phone_pattern.match(line)
-    print(match)
+    matches = phone_pattern.findall(line)
+    if len(matches) > 0:
+        for phone_number in matches:
+            numbers.add(normalize_phone_number(phone_number))
+    matches = email_pattern.findall(line)
+    if len(matches) > 0:
+        for email in matches:
+            emails.add(normalize_email(email))
 
-# Need to get into the potential-contacts.txt file and get email and numbers out
-# Need to open the potential-contacts.txt file
-# open_file = open("assets/potential-contacts.txt", "r")
-# print(open_file.read())
+
+# Opens the potential-contacts.txt file to find the phone numbers and email addresses
 with open("assets/potential-contacts.txt") as potential_contacts:
     lines = potential_contacts.readlines()
-# print(lines)
+
+for line in lines:
+    matches = phone_pattern.findall(line)
+    if len(matches) > 0:
+        for phone_number in matches:
+            numbers.add(normalize_phone_number(phone_number))
+    matches = email_pattern.findall(line)
+    if len(matches) > 0:
+        for email in matches:
+            emails.add(normalize_email(email))
 
 
-# create a report (joined list of #s), save to variable, write the variable to the phone_numbers.txt
-# clean up the numbers using regex (standardize)
-# use a replace method first, then regex
+# Opens the phone_numbers.txt file and writes the output into it
+with open("assets/phone_numbers.txt", "w") as phone_number_file:
+    for number in sorted(numbers):
+        phone_number_file.write(f"{number}\n")
+
+# Opens the emails.txt file and writes the output into it
+with open("assets/emails.txt", "w") as emails_file:
+    for email in sorted(emails):
+        emails_file.write(f"{email}\n")
