@@ -1,11 +1,11 @@
 import re
 
 # Things that need to be done:
-# [] Find and collect all email addresses and phone numbers.
-# [] Store email addresses in emails.txt
-# [] Store phone numbers in phone_numbers.txt
-# [] Sort info in ascending order
-# [] No duplicate entries
+# [x] Find and collect all email addresses and phone numbers.
+# [x] Store email addresses in emails.txt
+# [x] Store phone numbers in phone_numbers.txt
+# [x] Sort info in ascending order
+# [x] No duplicate entries
 
 # assumption input is a valid phone number found by regex
 def normalize_phone_number(input):
@@ -41,7 +41,8 @@ def normalize_email(input):
     return input.lower()
 
 
-# pattern from regex
+# pattern from regex.
+# re.compile referenced from https://docs.python.org/3/library/re.html
 phone_pattern = re.compile("\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}")
 email_pattern = re.compile(
     "[a-zA-Z][a-zA-Z0-9]*[\.]{0,1}[a-zA-Z0-9]*[a-zA-Z]\@[a-zA-Z][a-zA-Z0-9\.]*\.[a-zA-Z]{3,12}"
@@ -49,30 +50,34 @@ email_pattern = re.compile(
 
 with open("assets/existing-contacts.txt") as existing_contacts:
     lines = existing_contacts.readlines()
-# print(lines)
-numbers = set()  # returns a new set object
-emails = set()  # returns a new set object
+# the set() methods return a new set object
+numbers = set()
+emails = set()
 
 for line in lines:
+    # this will match the regex pattern for phone numbers above for the existing contacts
     matches = phone_pattern.findall(line)
     if len(matches) > 0:
         for phone_number in matches:
             numbers.add(normalize_phone_number(phone_number))
+    # this will match the regex pattern for email addresses above
     matches = email_pattern.findall(line)
     if len(matches) > 0:
         for email in matches:
             emails.add(normalize_email(email))
 
 
-# Opens the potential-contacts.txt file to find the phone numbers and email addresses
+# Opens the potential-contacts.txt file to find the phone numbers and email addresses for the potential contacts
 with open("assets/potential-contacts.txt") as potential_contacts:
     lines = potential_contacts.readlines()
 
 for line in lines:
+    # this will match the regex pattern for phone numbers above
     matches = phone_pattern.findall(line)
     if len(matches) > 0:
         for phone_number in matches:
             numbers.add(normalize_phone_number(phone_number))
+    # this will match the regex pattern for email addresses above
     matches = email_pattern.findall(line)
     if len(matches) > 0:
         for email in matches:
